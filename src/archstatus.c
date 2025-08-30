@@ -1,5 +1,6 @@
 #include <cjson/cJSON.h>
 #include <curl/curl.h>
+#include <stdarg.h>
 
 #include "archstatus.h"
 
@@ -9,10 +10,16 @@
 #define COLOR_ORANGE_BACKGROUND "\033[48;2;242;144;48m"
 #define COLOR_RED_FOREGROUND "\033[38;2;223;72;74m"
 #define COLOR_RED_BACKGROUND "\033[48;2;223;72;74m"
+#define COLOR_GREY_FOREGROUND "\033[38;2;104;119;144m"
+#define COLOR_GREY_BACKGROUND "\033[48;2;104;119;144m"
+#define ANSI_BOLD "\x1b[1m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 #define BAR_RATIO_GREEN_THRESHOLD 99.0f
 #define BAR_RATIO_ORANGE_THRESHOLD 95.0f
+
+#define STATUS_OPERATIONAL_CODE "success"
+#define STATUS_DOWN_CODE "danger"
 
 output_config_t *init_output_config() {
     output_config_t *res = malloc(sizeof(output_config_t));
@@ -326,10 +333,13 @@ end:
 //Frontend
 
 char *format_monitors_data(monitor_list_result_t *result) {
-	char str[1024] = "";
+	char str[2048] = "";		//THIS NEEDS TO BE INCREASED IN CASE DATA FROM LONGER AGO IS FETCHED
+	sprintf(str, "%s%s%s\n\n", ANSI_BOLD, "Monitors (default)", ANSI_COLOR_RESET);
 	for(int monitor_i = 0; monitor_i < result->total_monitors; monitor_i++) {
 		monitor_t monitor = result->monitors[monitor_i];
-		sprintf(str + strlen(str), "%s -> | %s\n", monitor.name, format_ratio(&(monitor.quarter_ratio)));
+		sprintf(str + strlen(str), "%s -> | %s", monitor.name, format_ratio(&(monitor.quarter_ratio)));
+		sprintf(str + strlen(str), "\t\t%s\n", format_monitor_status(monitor.status));
+		sprintf(str + strlen(str), "%s", "└> ");
 		ratio_t *daily_ratios = monitor.daily_ratios;
 		for(int daily_ratio_i = sizeof(daily_ratios)-1; daily_ratio_i >= 0; daily_ratio_i--) {
 			ratio_t daily_ratio = daily_ratios[daily_ratio_i];
@@ -367,5 +377,16 @@ char* ratio_to_colored_space(ratio_t *ratio) {
 		color = COLOR_RED_BACKGROUND;
 	}
 	sprintf(buf, "%s %s", color, ANSI_COLOR_RESET);
+	return strdup(buf);
+}
+
+char* format_monitor_status(char *status) {
+	char buf[128];
+	if(strcmp(status, STATUS_OPERATIONAL_CODE) == 0)
+		 sprintf(buf, "%s• %s%s", COLOR_GREEN_FOREGROUND, "Operational", ANSI_COLOR_RESET);
+	else if(strcmp(status, STATUS_DOWN_CODE) == 0)
+		 sprintf(buf, "%s• %s%s", COLOR_RED_FOREGROUND, "Down", ANSI_COLOR_RESET);
+	else 
+		 sprintf(buf, "%s• %s%s", COLOR_GREY_FOREGROUND, "Unknown", ANSI_COLOR_RESET);
 	return strdup(buf);
 }
