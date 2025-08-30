@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-	//Print arch logo and global status
+	print_arch_logo();
 
 	if(any || config->do_aur || config->do_forum || config->do_site || config->do_wiki) {
         fetch_data_t *monitors_data = fetch_url(ARCHLINUX_STATUS_MONITOR_LIST_ENDPOINT);
