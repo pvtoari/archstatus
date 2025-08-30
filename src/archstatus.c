@@ -331,7 +331,7 @@ char *format_monitors_data(monitor_list_result_t *result) {
 		monitor_t monitor = result->monitors[monitor_i];
 		sprintf(str + strlen(str), "%s -> | %s\n", monitor.name, format_ratio(&(monitor.quarter_ratio)));
 		ratio_t *daily_ratios = monitor.daily_ratios;
-		for(int daily_ratio_i = 0; daily_ratio_i < sizeof(daily_ratios); daily_ratio_i++) {
+		for(int daily_ratio_i = sizeof(daily_ratios)-1; daily_ratio_i >= 0; daily_ratio_i--) {
 			ratio_t daily_ratio = daily_ratios[daily_ratio_i];
 			sprintf(str + strlen(str), "%s ", ratio_to_colored_space(&daily_ratio));
 		}
