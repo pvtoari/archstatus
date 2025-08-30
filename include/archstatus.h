@@ -30,7 +30,9 @@ latest_events_result_t *parse_events_data(fetch_data_t *data);
 
 monitor_list_result_t *parse_monitor_list_data(fetch_data_t *data);
 
-char* format_monitors_data(monitor_list_result_t *result);
+void print_monitors_title();
+
+void print_monitor_data(monitor_t *monitor);
 
 char* format_ratio(ratio_t *ratio);
 
@@ -38,7 +40,7 @@ char* ratio_to_colored_space(ratio_t *ratio);
 
 char* format_monitor_status(char *status);
 
-char* format_events(latest_events_result_t *result);
+void print_events(latest_events_result_t *result);
 
 char* format_event(event_t *event);
 #endif // ARCHSTATUS_H

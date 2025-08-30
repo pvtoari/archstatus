@@ -63,22 +63,12 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (any) {
-        fetch_data_t *events_data = fetch_url(ARCHLINUX_STATUS_EVENT_FEED_ENDPOINT);
-        if (!events_data) {
-            fprintf(stderr, "error: failed to fetch events data.\n");
-            exit(EXIT_FAILURE);
-        }
+	//Print arch logo and global status
 
+	if(any || config->do_aur || config->do_forum || config->do_site || config->do_wiki) {
         fetch_data_t *monitors_data = fetch_url(ARCHLINUX_STATUS_MONITOR_LIST_ENDPOINT);
         if(!monitors_data) {
             fprintf(stderr, "error: failed to fetch monitors data.\n");
-            exit(EXIT_FAILURE);
-        }
-
-        latest_events_result_t *events = parse_events_data(events_data);
-        if (!events) {
-            fprintf(stderr, "error: failed to parse events data.\n");
             exit(EXIT_FAILURE);
         }
 
@@ -88,8 +78,34 @@ int main(int argc, char *argv[]) {
             exit(EXIT_FAILURE);
         }
 
-        // WIP: Terminal frontend stuff
-		printf("%s", format_monitors_data(parse_monitor_list_data(monitors_data)));
-		printf("%s", format_events(events));
-    }
+		print_monitors_title();
+		if(any || config->do_aur) {
+			print_monitor_data(&(monitors->monitors[0]));
+		}
+		if(any || config->do_forum) {
+			print_monitor_data(&(monitors->monitors[1]));
+		}
+		if(any || config->do_site) {
+			print_monitor_data(&(monitors->monitors[2]));
+		}
+		if(any || config->do_wiki) {
+			print_monitor_data(&(monitors->monitors[3]));
+		}
+	}
+
+    if (any || config->do_last_events) {
+        fetch_data_t *events_data = fetch_url(ARCHLINUX_STATUS_EVENT_FEED_ENDPOINT);
+        if (!events_data) {
+            fprintf(stderr, "error: failed to fetch events data.\n");
+            exit(EXIT_FAILURE);
+        }
+
+        latest_events_result_t *events = parse_events_data(events_data);
+        if (!events) {
+            fprintf(stderr, "error: failed to parse events data.\n");
+            exit(EXIT_FAILURE);
+        }
+
+		print_events(events);
+	}
 }

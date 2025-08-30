@@ -332,22 +332,20 @@ end:
 
 //Frontend
 
-char *format_monitors_data(monitor_list_result_t *result) {
-	char str[2048] = "";		//THIS NEEDS TO BE INCREASED IN CASE DATA FROM LONGER AGO IS FETCHED
-	sprintf(str, "%s%s%s\n\n", ANSI_BOLD, "Monitors (default)", ANSI_COLOR_RESET);
-	for(int monitor_i = 0; monitor_i < result->total_monitors; monitor_i++) {
-		monitor_t monitor = result->monitors[monitor_i];
-		sprintf(str + strlen(str), "%s -> | %s", monitor.name, format_ratio(&(monitor.quarter_ratio)));
-		sprintf(str + strlen(str), "\t\t%s\n", format_monitor_status(monitor.status));
-		sprintf(str + strlen(str), "%s", "└> ");
-		ratio_t *daily_ratios = monitor.daily_ratios;
+void print_monitors_title() {
+	printf("%s%s%s\n\n", ANSI_BOLD, "Monitors (default)", ANSI_COLOR_RESET);
+}
+
+void print_monitor_data(monitor_t *monitor) {
+		printf("%s -> | %s", monitor->name, format_ratio(&(monitor->quarter_ratio)));
+		printf("\t\t%s\n", format_monitor_status(monitor->status));
+		printf("%s", "└> ");
+		ratio_t *daily_ratios = monitor->daily_ratios;
 		for(int daily_ratio_i = sizeof(daily_ratios)-1; daily_ratio_i >= 0; daily_ratio_i--) {
 			ratio_t daily_ratio = daily_ratios[daily_ratio_i];
-			sprintf(str + strlen(str), "%s ", ratio_to_colored_space(&daily_ratio));
+			printf("%s ", ratio_to_colored_space(&daily_ratio));
 		}
-		sprintf(str + strlen(str), "\n\n");
-	}
-	return strdup(str);
+		printf("\n\n");
 }
 
 char* format_ratio(ratio_t *ratio) {
@@ -391,13 +389,11 @@ char* format_monitor_status(char *status) {
 	return strdup(buf);
 }
 
-char* format_events(latest_events_result_t *result) {
-	char buf[4096] = "";
-	sprintf(buf, "\n%sStatus updates%s %sLast 30 days%s\n\n", ANSI_BOLD, ANSI_COLOR_RESET, COLOR_GREY_FOREGROUND, ANSI_COLOR_RESET);
+void print_events(latest_events_result_t *result) {
+	printf("\n%sStatus updates%s %sLast 30 days%s\n\n", ANSI_BOLD, ANSI_COLOR_RESET, COLOR_GREY_FOREGROUND, ANSI_COLOR_RESET);
 	for(int i = 0; i < result->count; i++) {
-		sprintf(buf + strlen(buf), "%s\n", format_event(&((result->events)[i])));
+		printf("%s\n", format_event(&((result->events)[i])));
 	}
-	return strdup(buf);
 }
 
 char* format_event(event_t *event) {
