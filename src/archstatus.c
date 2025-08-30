@@ -393,6 +393,7 @@ char* format_monitor_status(char *status) {
 
 char* format_events(latest_events_result_t *result) {
 	char buf[4096] = "";
+	sprintf(buf, "\n%sStatus updates%s %sLast 30 days%s\n\n", ANSI_BOLD, ANSI_COLOR_RESET, COLOR_GREY_FOREGROUND, ANSI_COLOR_RESET);
 	for(int i = 0; i < result->count; i++) {
 		sprintf(buf + strlen(buf), "%s\n", format_event(&((result->events)[i])));
 	}
@@ -401,8 +402,8 @@ char* format_events(latest_events_result_t *result) {
 
 char* format_event(event_t *event) {
 	char buf[2048] = "";
-	sprintf(buf, "%s%s%s\n", COLOR_GREY_FOREGROUND, event->date, ANSI_COLOR_RESET);
-	sprintf(buf + strlen(buf), "%s%s%s\n", ANSI_BOLD, event->title, ANSI_COLOR_RESET);
+	sprintf(buf, "%s[%s]%s\n", COLOR_GREY_FOREGROUND, event->date, ANSI_COLOR_RESET);
+	sprintf(buf + strlen(buf), "%s%s%s\n\n", ANSI_BOLD, event->title, ANSI_COLOR_RESET);
 	sprintf(buf + strlen(buf), "%s\n", event->content);
 	sprintf(buf + strlen(buf), "%sUpdated on %s%s\n", COLOR_GREY_FOREGROUND, event->time_gmt, ANSI_COLOR_RESET);
 	return strdup(buf);
