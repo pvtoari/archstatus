@@ -37,4 +37,8 @@ char* format_ratio(ratio_t *ratio);
 char* ratio_to_colored_space(ratio_t *ratio);
 
 char* format_monitor_status(char *status);
+
+char* format_events(latest_events_result_t *result);
+
+char* format_event(event_t *event);
 #endif // ARCHSTATUS_H

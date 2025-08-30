@@ -90,5 +90,6 @@ int main(int argc, char *argv[]) {
 
         // WIP: Terminal frontend stuff
 		printf("%s", format_monitors_data(parse_monitor_list_data(monitors_data)));
+		printf("%s", format_events(events));
     }
 }

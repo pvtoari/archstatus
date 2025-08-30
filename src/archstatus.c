@@ -390,3 +390,20 @@ char* format_monitor_status(char *status) {
 		 sprintf(buf, "%s• %s%s", COLOR_GREY_FOREGROUND, "Unknown", ANSI_COLOR_RESET);
 	return strdup(buf);
 }
+
+char* format_events(latest_events_result_t *result) {
+	char buf[4096] = "";
+	for(int i = 0; i < result->count; i++) {
+		sprintf(buf + strlen(buf), "%s\n", format_event(&((result->events)[i])));
+	}
+	return strdup(buf);
+}
+
+char* format_event(event_t *event) {
+	char buf[2048] = "";
+	sprintf(buf, "%s%s%s\n", COLOR_GREY_FOREGROUND, event->date, ANSI_COLOR_RESET);
+	sprintf(buf + strlen(buf), "%s%s%s\n", ANSI_BOLD, event->title, ANSI_COLOR_RESET);
+	sprintf(buf + strlen(buf), "%s\n", event->content);
+	sprintf(buf + strlen(buf), "%sUpdated on %s%s\n", COLOR_GREY_FOREGROUND, event->time_gmt, ANSI_COLOR_RESET);
+	return strdup(buf);
+}
