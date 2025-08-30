@@ -80,16 +80,16 @@ int main(int argc, char *argv[]) {
 
 		print_monitors_title();
 		if(any || config->do_aur) {
-			print_monitor_data(&(monitors->monitors[0]));
+			print_monitor_data(&(monitors->monitors[MONITOR_ORD_AUR]));
 		}
 		if(any || config->do_forum) {
-			print_monitor_data(&(monitors->monitors[1]));
+			print_monitor_data(&(monitors->monitors[MONITOR_ORD_FORUM]));
 		}
 		if(any || config->do_site) {
-			print_monitor_data(&(monitors->monitors[2]));
+			print_monitor_data(&(monitors->monitors[MONITOR_ORD_SITE]));
 		}
 		if(any || config->do_wiki) {
-			print_monitor_data(&(monitors->monitors[3]));
+			print_monitor_data(&(monitors->monitors[MONITOR_ORD_WIKI]));
 		}
 	}
 
