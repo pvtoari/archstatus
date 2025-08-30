@@ -30,4 +30,9 @@ latest_events_result_t *parse_events_data(fetch_data_t *data);
 
 monitor_list_result_t *parse_monitor_list_data(fetch_data_t *data);
 
+char* format_monitors_data(monitor_list_result_t *result);
+
+char* format_ratio(ratio_t *ratio);
+
+char* ratio_to_colored_space(ratio_t *ratio);
 #endif // ARCHSTATUS_H

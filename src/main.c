@@ -88,6 +88,7 @@ int main(int argc, char *argv[]) {
             exit(EXIT_FAILURE);
         }
 
-        // TODO: Terminal frontend stuff
+        // WIP: Terminal frontend stuff
+		printf("%s", format_monitors_data(parse_monitor_list_data(monitors_data)));
     }
 }

@@ -3,6 +3,14 @@
 
 #include "archstatus.h"
 
+#define COLOR_GREEN_FOREGROUND "\033[38;2;59;214;113m"
+#define COLOR_GREEN_BACKGROUND "\033[48;2;59;214;113m"
+#define COLOR_ORANGE_FOREGROUND "\033[38;2;242;144;48m"
+#define COLOR_ORANGE_BACKGROUND "\033[48;2;242;144;48m"
+#define COLOR_RED_FOREGROUND "\033[38;2;223;72;74m"
+#define COLOR_RED_BACKGROUND "\033[48;2;223;72;74m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+
 output_config_t *init_output_config() {
     output_config_t *res = malloc(sizeof(output_config_t));
     memset(res, 0, sizeof(output_config_t));
@@ -310,4 +318,51 @@ end:
     if (result) free_monitor_list_result(result);
     cJSON_Delete(json_root);
     return NULL;    
+}
+
+//Frontend
+
+char *format_monitors_data(monitor_list_result_t *result) {
+	char str[1024] = "";
+	for(int monitor_i = 0; monitor_i < result->total_monitors; monitor_i++) {
+		monitor_t monitor = result->monitors[monitor_i];
+		sprintf(str + strlen(str), "%s -> | %s\n", monitor.name, format_ratio(&(monitor.quarter_ratio)));
+		ratio_t *daily_ratios = monitor.daily_ratios;
+		for(int daily_ratio_i = 0; daily_ratio_i < sizeof(daily_ratios); daily_ratio_i++) {
+			ratio_t daily_ratio = daily_ratios[daily_ratio_i];
+			sprintf(str + strlen(str), "%s ", ratio_to_colored_space(&daily_ratio));
+		}
+		sprintf(str + strlen(str), "\n\n");
+	}
+	return strdup(str);
+}
+
+char* format_ratio(ratio_t *ratio) {
+	char buf[128];
+	char *color; 
+	float value = ratio->ratio;
+	if(value > 99.0f) {
+		color = COLOR_GREEN_FOREGROUND;
+	} else if (value > 95.0f) {
+		color = COLOR_ORANGE_FOREGROUND;
+	} else {
+		color = COLOR_RED_FOREGROUND;
+	}
+	sprintf(buf, "%s%.3f%%%s", color, value, ANSI_COLOR_RESET);
+	return strdup(buf);
+}
+
+char* ratio_to_colored_space(ratio_t *ratio) {
+	char buf[128];
+	float value = ratio->ratio;
+	char *color;
+	if(value > 99.0f) {
+		color = COLOR_GREEN_BACKGROUND;
+	} else if (value > 95.0f) {
+		color = COLOR_ORANGE_BACKGROUND;
+	} else {
+		color = COLOR_RED_BACKGROUND;
+	}
+	sprintf(buf, "%s %s", color, ANSI_COLOR_RESET);
+	return strdup(buf);
 }
