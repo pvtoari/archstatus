@@ -11,6 +11,9 @@
 #define COLOR_RED_BACKGROUND "\033[48;2;223;72;74m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
+#define BAR_RATIO_GREEN_THRESHOLD 99.0f
+#define BAR_RATIO_ORANGE_THRESHOLD 95.0f
+
 output_config_t *init_output_config() {
     output_config_t *res = malloc(sizeof(output_config_t));
     memset(res, 0, sizeof(output_config_t));
@@ -341,9 +344,9 @@ char* format_ratio(ratio_t *ratio) {
 	char buf[128];
 	char *color; 
 	float value = ratio->ratio;
-	if(value > 99.0f) {
+	if(value > BAR_RATIO_GREEN_THRESHOLD) {
 		color = COLOR_GREEN_FOREGROUND;
-	} else if (value > 95.0f) {
+	} else if (value > BAR_RATIO_ORANGE_THRESHOLD) {
 		color = COLOR_ORANGE_FOREGROUND;
 	} else {
 		color = COLOR_RED_FOREGROUND;
@@ -356,9 +359,9 @@ char* ratio_to_colored_space(ratio_t *ratio) {
 	char buf[128];
 	float value = ratio->ratio;
 	char *color;
-	if(value > 99.0f) {
+	if(value > BAR_RATIO_GREEN_THRESHOLD) {
 		color = COLOR_GREEN_BACKGROUND;
-	} else if (value > 95.0f) {
+	} else if (value > BAR_RATIO_ORANGE_THRESHOLD) {
 		color = COLOR_ORANGE_BACKGROUND;
 	} else {
 		color = COLOR_RED_BACKGROUND;
