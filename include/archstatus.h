@@ -1,4 +1,5 @@
 #ifndef ARCHSTATUS_H
+#define ARCHSTATUS_H
 
 #include <string.h>
 #include <stdlib.h>
