@@ -1,0 +1,313 @@
+#include <cjson/cJSON.h>
+#include <curl/curl.h>
+
+#include "archstatus.h"
+
+output_config_t *init_output_config() {
+    output_config_t *res = malloc(sizeof(output_config_t));
+    memset(res, 0, sizeof(output_config_t));
+
+    return res;
+}
+
+static size_t write_memory_callback(void *content, size_t size, size_t nmemb, void *userp) {
+    size_t real_size = size * nmemb;
+    fetch_data_t *mem = (fetch_data_t *) userp;
+
+    char *ptr = realloc(mem->memory, mem->size + real_size + 1);
+    if (!ptr) {
+        fprintf(stderr, "failed to realloc (returned NULL)");
+        return 0;
+    }
+
+    mem->memory = ptr;
+    memcpy(&(mem->memory[mem->size]), content, real_size);
+    mem->size += real_size;
+    mem->memory[mem->size] = 0;
+
+    return real_size;
+}
+
+fetch_data_t *fetch_url(char *url) {
+    CURL *curl;
+    CURLcode curl_res;
+
+    fetch_data_t data = {0};
+    data.memory = malloc(1);
+    data.size = 0;
+
+    fetch_data_t *result = NULL;
+
+    curl = curl_easy_init();
+    if (!curl) {
+        if (data.memory) free(data.memory);
+        return result;
+    }
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_memory_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &data);
+    curl_easy_setopt(curl, CURLOPT_CA_CACHE_TIMEOUT, 604800L);
+    curl_easy_setopt(curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
+
+    curl_res = curl_easy_perform(curl);
+    if (curl_res == CURLE_OK) {
+        result = malloc(sizeof(fetch_data_t));
+        if (result) {
+            result->memory = data.memory;
+            result->size = data.size;
+        } else free(data.memory);
+    } else {
+        fprintf(stderr, "failed to perform curl: %s\n", curl_easy_strerror(curl_res));
+        free(data.memory);
+    }
+
+    curl_easy_cleanup(curl);
+    return result;
+}
+
+static void free_latest_events_result(latest_events_result_t *res) {
+    if (!res) return;
+
+    if (res->events) {
+        for (size_t i = 0; i < res->count; i++) {
+            free(res->events[i].content);
+            free(res->events[i].date);
+            free(res->events[i].event_type);
+            free(res->events[i].time);
+            free(res->events[i].time_gmt);
+            free(res->events[i].title);
+        }
+        free(res->events);
+    }
+
+    free(res);
+}
+
+static void free_monitor_list_result(monitor_list_result_t *res) {
+    if (!res) return;
+
+    for (size_t i = 0; i < DAYS_AMOUNT; i++) {
+        free(res->days[i]);
+    }
+
+    if (res->monitors) {
+        for (size_t i = 0; i < res->total_monitors; i++) {
+            free(res->monitors[i].name);
+            free(res->monitors[i].status);
+            free(res->monitors[i].monthly_ratio.label);
+            free(res->monitors[i].quarter_ratio.label);
+            for (size_t j = 0; j < DAYS_AMOUNT; j++) {
+                free(res->monitors[i].daily_ratios[j].label);
+            }
+        }
+
+        free(res->monitors);
+    }
+
+    free(res->statistics.count_result);
+
+    free(res);
+}
+
+latest_events_result_t *parse_events_data(fetch_data_t *data) {
+    latest_events_result_t *result = malloc(sizeof(latest_events_result_t));
+    if (!result) return NULL;
+
+    result->events = NULL;
+
+    cJSON *json_root = cJSON_ParseWithLength(data->memory, data->size);
+    if (!json_root) goto end;
+
+    cJSON *json_meta = cJSON_GetObjectItemCaseSensitive(json_root, "meta");
+    if (!json_meta) goto end;
+
+    cJSON *json_count = cJSON_GetObjectItemCaseSensitive(json_meta, "count");
+    if (!json_meta || !cJSON_IsNumber(json_count)) goto end;
+    result->count = json_count->valueint;
+
+    cJSON *json_results = cJSON_GetObjectItemCaseSensitive(json_root, "results");
+    if (!json_results || !cJSON_IsArray(json_results)) goto end;
+     
+    result->events = malloc(sizeof(event_t) * result->count);
+    if (!result->events) goto end;
+
+    for (size_t i = 0; i < result->count; i++) {
+        result->events[i].content = NULL;
+        result->events[i].date = NULL;
+        result->events[i].event_type = NULL;
+        result->events[i].time = NULL;
+        result->events[i].time_gmt = NULL;
+        result->events[i].title = NULL;
+    }
+
+    cJSON *event = NULL;
+    size_t i = 0;
+    cJSON_ArrayForEach(event, json_results) {
+        cJSON *json_content = cJSON_GetObjectItemCaseSensitive(event, "content");
+        if (!json_content || !cJSON_IsString(json_content)) goto end;
+        result->events[i].content = strdup(json_content->valuestring);
+
+        cJSON *json_date = cJSON_GetObjectItemCaseSensitive(event, "date");
+        if (!json_date || !cJSON_IsString(json_date)) goto end;
+        result->events[i].date = strdup(json_date->valuestring);
+
+        cJSON *json_event_type = cJSON_GetObjectItemCaseSensitive(event, "eventType");
+        if (!json_event_type || !cJSON_IsString(json_event_type)) goto end;
+        result->events[i].event_type = strdup(json_event_type->valuestring);
+
+        cJSON *json_time = cJSON_GetObjectItemCaseSensitive(event, "time");
+        if (!json_time || !cJSON_IsString(json_time)) goto end;
+        result->events[i].time = strdup(json_time->valuestring);
+
+        cJSON *json_time_gmt = cJSON_GetObjectItemCaseSensitive(event, "timeGMT");
+        if (!json_time_gmt || !cJSON_IsString(json_time_gmt)) goto end;
+        result->events[i].time_gmt = strdup(json_time_gmt->valuestring);
+
+        cJSON *json_title = cJSON_GetObjectItemCaseSensitive(event, "title");
+        if (!json_title || !cJSON_IsString(json_title)) goto end;
+        result->events[i].title = strdup(json_title->valuestring);
+
+        cJSON *json_timestamp = cJSON_GetObjectItemCaseSensitive(event, "ts");
+        if (!json_timestamp || !cJSON_IsNumber(json_timestamp)) goto end;
+        result->events[i].timestamp = json_timestamp->valuedouble;
+
+        i++;
+    }
+
+    return result;
+
+end:
+    if (result) free_latest_events_result(result);
+    cJSON_Delete(json_root);
+    return NULL;    
+}
+
+monitor_list_result_t *parse_monitor_list_data(fetch_data_t *data) {
+    monitor_list_result_t *result = malloc(sizeof(monitor_list_result_t));
+    if (!result) return NULL;
+
+    result->monitors = NULL;
+    for (size_t i = 0; i < DAYS_AMOUNT; i++) result->days[i] = NULL;
+    result->statistics.count_result = NULL;
+
+
+    cJSON *json_root = cJSON_ParseWithLength(data->memory, data->size);
+    if (!json_root) goto end;
+
+    cJSON *json_days = cJSON_GetObjectItemCaseSensitive(json_root, "days");
+    if (!json_days) goto end;
+    cJSON* day = NULL;
+    size_t i = 0;
+    cJSON_ArrayForEach(day, json_days) {
+        if (!day || !cJSON_IsString(day)) goto end;
+        result->days[i++] = strdup(day->valuestring);
+    }
+
+    cJSON *json_psp = cJSON_GetObjectItemCaseSensitive(json_root, "psp");
+    if (!json_psp) goto end;
+
+    cJSON *json_total_monitors = cJSON_GetObjectItemCaseSensitive(json_psp, "totalMonitors");
+    if (!json_total_monitors || !cJSON_IsNumber(json_total_monitors)) goto end;
+    result->total_monitors = json_total_monitors->valueint;
+
+    result->monitors = malloc(sizeof(monitor_t) * result->total_monitors);
+    for (size_t i = 0; i < result->total_monitors; i++) {
+        result->monitors[i].name = NULL;
+        result->monitors[i].status = NULL;
+        result->monitors[i].monthly_ratio.label = NULL;
+        result->monitors[i].quarter_ratio.label = NULL;
+        for (size_t j = 0; j < DAYS_AMOUNT; j++) {
+            result->monitors[i].daily_ratios[j].label = NULL;
+        }
+    }
+
+    cJSON *json_monitors = cJSON_GetObjectItemCaseSensitive(json_psp, "monitors");
+    if (!json_monitors || !cJSON_IsArray(json_monitors)) goto end;
+    cJSON *monitor = NULL;
+    i = 0;
+    cJSON_ArrayForEach(monitor, json_monitors) {
+        cJSON *json_monthly_ratio = cJSON_GetObjectItemCaseSensitive(monitor, "30dRatio");
+        if (!json_monthly_ratio) goto end;
+
+        cJSON *json_monthly_ratio_label = cJSON_GetObjectItemCaseSensitive(json_monthly_ratio, "label");
+        if (!json_monthly_ratio_label || !cJSON_IsString(json_monthly_ratio_label)) goto end;
+        result->monitors[i].monthly_ratio.label = strdup(json_monthly_ratio_label->valuestring);
+
+        cJSON *json_monthly_ratio_value = cJSON_GetObjectItemCaseSensitive(json_monthly_ratio, "ratio");
+        if (!json_monthly_ratio_value || !cJSON_IsString(json_monthly_ratio_value)) goto end;
+        result->monitors[i].monthly_ratio.ratio = atof(json_monthly_ratio_value->valuestring);
+
+        cJSON *json_quarter_ratio = cJSON_GetObjectItemCaseSensitive(monitor, "90dRatio");
+        if (!json_quarter_ratio) goto end;
+
+        cJSON *json_quarter_ratio_label = cJSON_GetObjectItemCaseSensitive(json_quarter_ratio, "label");
+        if (!json_quarter_ratio_label || !cJSON_IsString(json_quarter_ratio_label)) goto end;
+        result->monitors[i].quarter_ratio.label = strdup(json_quarter_ratio_label->valuestring);
+
+        cJSON *json_quarter_ratio_value = cJSON_GetObjectItemCaseSensitive(json_quarter_ratio, "ratio");
+        if (!json_quarter_ratio_value || !cJSON_IsString(json_quarter_ratio_value)) goto end;
+        result->monitors[i].quarter_ratio.ratio = atof(json_quarter_ratio_value->valuestring);
+
+        cJSON *json_daily_ratios = cJSON_GetObjectItemCaseSensitive(monitor, "dailyRatios");
+        if (!json_daily_ratios || !cJSON_IsArray(json_daily_ratios)) goto end;
+        cJSON *ratio = NULL;
+        size_t j = 0;
+        cJSON_ArrayForEach(ratio, json_daily_ratios) {
+            cJSON *json_daily_ratio_label = cJSON_GetObjectItemCaseSensitive(ratio, "label");
+            if (!json_daily_ratio_label || !cJSON_IsString(json_daily_ratio_label)) goto end;
+            result->monitors[i].daily_ratios[j].label = strdup(json_daily_ratio_label->valuestring);
+
+            cJSON *json_daily_ratio_value = cJSON_GetObjectItemCaseSensitive(ratio, "ratio");
+            if (!json_daily_ratio_value || !cJSON_IsString(json_daily_ratio_value)) goto end;
+            result->monitors[i].daily_ratios[j].ratio = atof(json_daily_ratio_value->valuestring);
+
+            j++;
+        }
+
+        cJSON *json_id = cJSON_GetObjectItemCaseSensitive(monitor, "monitorId");
+        if (!json_id || !cJSON_IsNumber(json_id)) goto end;
+        result->monitors[i].id = json_id->valueint;
+
+        cJSON *json_name = cJSON_GetObjectItemCaseSensitive(monitor, "name");
+        if (!json_name || !cJSON_IsString(json_name)) goto end;
+        result->monitors[i].name = strdup(json_name->valuestring);
+        
+        cJSON *json_status = cJSON_GetObjectItemCaseSensitive(monitor, "statusClass");
+        if (!json_status || !cJSON_IsString(json_status)) goto end;
+        result->monitors[i].status = strdup(json_status->valuestring);
+
+        i++;
+    }
+
+    cJSON *json_statistics = cJSON_GetObjectItemCaseSensitive(json_root, "statistics");
+    if (!json_statistics) goto end;
+
+    cJSON *json_count_result = cJSON_GetObjectItemCaseSensitive(json_statistics, "count_result");
+    if (!json_count_result || !cJSON_IsString(json_count_result)) goto end;
+    result->statistics.count_result = strdup(json_count_result->valuestring);
+
+    cJSON *json_counts = cJSON_GetObjectItemCaseSensitive(json_statistics, "counts");
+    if (!json_counts) goto end;
+
+    cJSON *json_down = cJSON_GetObjectItemCaseSensitive(json_counts, "down");
+    if (!json_down || !cJSON_IsNumber(json_down)) goto end;
+    result->statistics.count_down = json_down->valueint;
+
+    cJSON *json_paused = cJSON_GetObjectItemCaseSensitive(json_counts, "paused");
+    if (!json_paused || !cJSON_IsNumber(json_paused)) goto end;
+    result->statistics.count_paused = json_paused->valueint;
+
+    cJSON *json_up = cJSON_GetObjectItemCaseSensitive(json_counts, "up");
+    if (!json_up || !cJSON_IsNumber(json_up)) goto end;
+    result->statistics.count_up = json_up->valueint;
+
+    return result;
+
+end:
+    if (result) free_monitor_list_result(result);
+    cJSON_Delete(json_root);
+    return NULL;    
+}

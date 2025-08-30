@@ -1,0 +1,7 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define ARCHLINUX_STATUS_MONITOR_LIST_ENDPOINT  "https://status.archlinux.org/api/getMonitorList/vmM5ruWEAB?page=1&_=1756477778160"
+#define ARCHLINUX_STATUS_EVENT_FEED_ENDPOINT    "https://status.archlinux.org/api/getEventFeed/vmM5ruWEAB?from_date=1753885778&_=1756477778161"
+
+#endif // CONSTANTS_H
