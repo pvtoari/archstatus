@@ -355,11 +355,12 @@ void print_monitors_title() {
 void print_monitor_data(monitor_t *monitor) {
 		printf("%s -> | %s", monitor->name, format_ratio(&(monitor->quarter_ratio)));
 		printf("\t\t%s\n", format_monitor_status(monitor->status));
-		ratio_t *daily_ratios = monitor->daily_ratios;
-		for(int daily_ratio_i = sizeof(daily_ratios)-1; daily_ratio_i >= 0; daily_ratio_i--) {
-			ratio_t daily_ratio = daily_ratios[daily_ratio_i];
+
+		for(int i = DAYS_AMOUNT - 1; i >= 0; i--) {
+			ratio_t daily_ratio = monitor->daily_ratios[i];
 			printf("%s ", ratio_to_colored_space(&daily_ratio));
 		}
+
 		printf("\n\n");
 }
 
