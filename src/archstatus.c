@@ -143,6 +143,45 @@ static void free_monitor_list_result(monitor_list_result_t *res) {
     free(res);
 }
 
+char *replace_str(const char *str, const char *radix, const char *rep) {
+    size_t radix_len = strlen(radix);
+    size_t rep_len  = strlen(rep);
+
+    int count = 0;
+    const char *p = str;
+    while ((p = strstr(p, radix)) != NULL) {
+        count++;
+        p += radix_len;
+    }
+
+    size_t new_len = strlen(str) + count * (rep_len - radix_len) + 1;
+    char *result = malloc(new_len);
+    if (!result) return NULL;
+
+    char *out = result;
+    const char *in = str;
+    while ((p = strstr(in, radix)) != NULL) {
+        size_t len_before = p - in;
+        memcpy(out, in, len_before);
+        out += len_before;
+        memcpy(out, rep, rep_len);
+        out += rep_len;
+        in = p + radix_len;
+    }
+
+    strcpy(out, in);
+
+    return result;
+}
+
+char *sanitize_content_str(char *content_str) {
+    char *nobrs = replace_str(content_str, "<br />", "");
+    char *quoted = replace_str(nobrs, "&quot;", "\"");
+    if(nobrs) free(nobrs);
+
+    return quoted;
+}
+
 latest_events_result_t *parse_events_data(fetch_data_t *data) {
     latest_events_result_t *result = malloc(sizeof(latest_events_result_t));
     if (!result) return NULL;
@@ -179,7 +218,7 @@ latest_events_result_t *parse_events_data(fetch_data_t *data) {
     cJSON_ArrayForEach(event, json_results) {
         cJSON *json_content = cJSON_GetObjectItemCaseSensitive(event, "content");
         if (!json_content || !cJSON_IsString(json_content)) goto end;
-        result->events[i].content = strdup(json_content->valuestring);
+        result->events[i].content = sanitize_content_str(json_content->valuestring);
 
         cJSON *json_date = cJSON_GetObjectItemCaseSensitive(event, "date");
         if (!json_date || !cJSON_IsString(json_date)) goto end;
