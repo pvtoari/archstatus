@@ -36,6 +36,8 @@ output_config_t *init_output_config() {
     output_config_t *res = malloc(sizeof(output_config_t));
     memset(res, 0, sizeof(output_config_t));
 
+    res->daily_ratio_amount = DAYS_AMOUNT;
+
     return res;
 }
 
@@ -362,13 +364,13 @@ void print_monitors_title() {
 	printf("%s%s%s\n\n", ANSI_BOLD, "Monitors (default)", ANSI_COLOR_RESET);
 }
 
-void print_monitor_data(monitor_t *monitor) {
+void print_monitor_data(monitor_t *monitor, int n_ratios) {
 		printf("%s -> | %s", monitor->name, format_ratio(&(monitor->quarter_ratio)));
-		for(int i = 0; i < DAYS_AMOUNT/4; i++)
+		for(int i = 0; i < n_ratios/4; i++)
 			printf("\t");
 		printf("%s\n", format_monitor_status(monitor->status));
 
-		for(int i = DAYS_AMOUNT - 1; i >= 0; i--) {
+		for(int i = n_ratios - 1; i >= 0; i--) {
 			ratio_t daily_ratio = monitor->daily_ratios[i];
 			printf("%s ", ratio_to_colored_space(&daily_ratio));
 		}

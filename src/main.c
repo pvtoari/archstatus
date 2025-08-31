@@ -4,20 +4,24 @@
 
 #include "archstatus.h"
 
+#define MIN(a,b) (((a)<(b))?(a):(b))
+
 void usage() {
     printf("Usage: %s [options]\n", PROGRAM_NAME);
     printf("Options:\n");
-    printf("  -e, --events      Show latest status events\n");
-    printf("  -f, --forum       Show forum status\n");
-    printf("  -s, --site        Show site status\n");
-    printf("  -r, --aur         Show AUR status\n");
-    printf("  -w, --wiki	    Show wiki status\n");
-    printf("  -h, --help        Shows this help message\n");
+    printf("  -e, --events          Show latest status events\n");
+    printf("  -f, --forum           Show forum status\n");
+    printf("  -s, --site            Show site status\n");
+    printf("  -r, --aur             Show AUR status\n");
+    printf("  -w, --wiki	        Show wiki status\n");
+    printf("  -d, --ratio-amount    Amount of daily ratios to show (default: %d)\n", DAYS_AMOUNT);
+    printf("  -h, --help            Shows this help message\n");
 }
 
 int main(int argc, char *argv[]) {
     struct option long_options[] = {
         {"help", no_argument, NULL, 'h'},
+        {"ratio-amount", required_argument, NULL, 'd'},
         {"wiki", no_argument, NULL, 'w'},
         {"aur", no_argument, NULL, 'r'},
         {"site", no_argument, NULL, 's'},
@@ -30,12 +34,15 @@ int main(int argc, char *argv[]) {
 
     bool any = true;
     int opt;
-    while ((opt = getopt_long(argc, argv, "hwrsfe", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hd:wrsfe", long_options, NULL)) != -1) {
         switch (opt) {
             case 'h':
                 any = false;
                 usage();
                 exit(EXIT_SUCCESS);
+            case 'd':
+                config->daily_ratio_amount = MIN(DAYS_AMOUNT, atoi(optarg));
+                break;
             case 'w':
                 any = false;
                 config->do_wiki = true;
@@ -57,7 +64,6 @@ int main(int argc, char *argv[]) {
                 config->do_last_events = true;
                 break;
             default:
-                printf("Unrecognized option: %c", opt);
                 usage();
                 exit(EXIT_FAILURE);
         }
@@ -80,16 +86,16 @@ int main(int argc, char *argv[]) {
 
 		print_monitors_title();
 		if(any || config->do_aur) {
-			print_monitor_data(&(monitors->monitors[MONITOR_ORD_AUR]));
+			print_monitor_data(&(monitors->monitors[MONITOR_ORD_AUR]), config->daily_ratio_amount);
 		}
 		if(any || config->do_forum) {
-			print_monitor_data(&(monitors->monitors[MONITOR_ORD_FORUM]));
+			print_monitor_data(&(monitors->monitors[MONITOR_ORD_FORUM]), config->daily_ratio_amount);
 		}
 		if(any || config->do_site) {
-			print_monitor_data(&(monitors->monitors[MONITOR_ORD_SITE]));
+			print_monitor_data(&(monitors->monitors[MONITOR_ORD_SITE]), config->daily_ratio_amount);
 		}
 		if(any || config->do_wiki) {
-			print_monitor_data(&(monitors->monitors[MONITOR_ORD_WIKI]));
+			print_monitor_data(&(monitors->monitors[MONITOR_ORD_WIKI]), config->daily_ratio_amount);
 		}
 	} else 
 		print_arch_logo("");
