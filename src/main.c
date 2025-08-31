@@ -63,8 +63,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-	print_arch_logo();
-
 	if(any || config->do_aur || config->do_forum || config->do_site || config->do_wiki) {
         fetch_data_t *monitors_data = fetch_url(ARCHLINUX_STATUS_MONITOR_LIST_ENDPOINT);
         if(!monitors_data) {
@@ -77,6 +75,8 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "error: failed to fetch parse monitors data.\n");
             exit(EXIT_FAILURE);
         }
+
+		print_arch_logo(monitors->statistics.count_result);
 
 		print_monitors_title();
 		if(any || config->do_aur) {
@@ -91,7 +91,8 @@ int main(int argc, char *argv[]) {
 		if(any || config->do_wiki) {
 			print_monitor_data(&(monitors->monitors[MONITOR_ORD_WIKI]));
 		}
-	}
+	} else 
+		print_arch_logo("");
 
     if (any || config->do_last_events) {
         fetch_data_t *events_data = fetch_url(ARCHLINUX_STATUS_EVENT_FEED_ENDPOINT);

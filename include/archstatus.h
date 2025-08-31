@@ -44,5 +44,5 @@ void print_events(latest_events_result_t *result);
 
 char* format_event(event_t *event);
 
-void print_arch_logo(void);
+void print_arch_logo(char *status);
 #endif // ARCHSTATUS_H

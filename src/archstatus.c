@@ -29,7 +29,7 @@
 \n\033[38;2;23;147;209m\x1b[1m       /p^###\\   \x1b[0m#   #    #  # \033[38;2;23;147;209m | | |   | |   |  X\x1b[0m\
 \n\033[38;2;23;147;209m\x1b[1m      /##P^q##\\  \x1b[0m#   #### #  # \033[38;2;23;147;209m | | |   | ^._.| / \\\x1b[0m\
 \n\033[38;2;23;147;209m\x1b[1m     /##(   )##\\\x1b[0m\
-\n\033[38;2;23;147;209m\x1b[1m    /###P   q#,^\\\x1b[0m\
+\n\033[38;2;23;147;209m\x1b[1m    /###P   q#,^\\\x1b[0m     %s\
 \n\033[38;2;23;147;209m\x1b[1m   /P^         ^q\\\x1b[0m"
 
 output_config_t *init_output_config() {
@@ -343,8 +343,18 @@ end:
 
 //Frontend
 
-void print_arch_logo() {
-	printf(ARCH_LOGO_ASCII_ART);
+void print_arch_logo(char *status) {
+	if(strcmp(status, "") == 0) {
+		printf(ARCH_LOGO_ASCII_ART, "");
+	} else if(strcmp(status, "All Clear") == 0) {
+		char *str;
+		asprintf(&str, "%s%s%s%s%s%s%s", COLOR_GREEN_FOREGROUND, BIG_BLACK_CIRCLE, ANSI_COLOR_RESET, " All systems ", COLOR_GREEN_FOREGROUND, "Operational", ANSI_COLOR_RESET);
+		printf(ARCH_LOGO_ASCII_ART, str);
+	} else {
+		char *str;
+		asprintf(&str, "%s%s%s%d%s%s%s%s", COLOR_RED_FOREGROUND, BIG_BLACK_CIRCLE, ANSI_COLOR_RESET, status[0], " monitor/s ", COLOR_RED_FOREGROUND, "Down", ANSI_COLOR_RESET);
+		printf(ARCH_LOGO_ASCII_ART, str); 
+	}
 	printf("\n\n");
 }
 
