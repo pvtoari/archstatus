@@ -15,6 +15,7 @@ typedef struct output_config_t {
     bool do_site;
     bool do_forum;
     bool do_last_events;
+    int daily_ratio_amount;
 } output_config_t;
 
 typedef struct fetch_data_t {
@@ -32,7 +33,7 @@ monitor_list_result_t *parse_monitor_list_data(fetch_data_t *data);
 
 void print_monitors_title();
 
-void print_monitor_data(monitor_t *monitor);
+void print_monitor_data(monitor_t *monitor, int n_ratios);
 
 char* format_ratio(ratio_t *ratio);
 
@@ -45,4 +46,5 @@ void print_events(latest_events_result_t *result);
 char* format_event(event_t *event);
 
 void print_arch_logo(void);
+
 #endif // ARCHSTATUS_H
