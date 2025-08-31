@@ -31,7 +31,7 @@ latest_events_result_t *parse_events_data(fetch_data_t *data);
 
 monitor_list_result_t *parse_monitor_list_data(fetch_data_t *data);
 
-void print_monitors_title();
+void print_monitors_title(char *from_date, char *to_date);
 
 void print_monitor_data(monitor_t *monitor, int n_ratios);
 
