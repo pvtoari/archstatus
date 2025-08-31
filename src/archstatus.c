@@ -354,7 +354,9 @@ void print_monitors_title() {
 
 void print_monitor_data(monitor_t *monitor) {
 		printf("%s -> | %s", monitor->name, format_ratio(&(monitor->quarter_ratio)));
-		printf("\t\t%s\n", format_monitor_status(monitor->status));
+		for(int i = 0; i < DAYS_AMOUNT/4; i++)
+			printf("\t");
+		printf("%s\n", format_monitor_status(monitor->status));
 
 		for(int i = DAYS_AMOUNT - 1; i >= 0; i--) {
 			ratio_t daily_ratio = monitor->daily_ratios[i];
