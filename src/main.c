@@ -15,7 +15,7 @@ void usage() {
     printf("  -s, --site            Show site status\n");
     printf("  -r, --aur             Show AUR status\n");
     printf("  -w, --wiki	        Show wiki status\n");
-    printf("  -d, --ratio-amount    Amount of daily ratios to show (default: %d)\n", DAYS_AMOUNT);
+    printf("  -d, --ratio-amount    Amount of daily ratios to show (default: %d)\n", DEFAULT_DAILY_RATIO_AMOUNT);
     printf("  -h, --help            Shows this help message\n");
 }
 

@@ -8,6 +8,7 @@
 #include "constants.h"
 
 #define PROGRAM_NAME "archstatus"
+#define DEFAULT_DAILY_RATIO_AMOUNT 30
 
 typedef struct output_config_t {
     bool do_wiki;

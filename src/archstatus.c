@@ -8,7 +8,7 @@ output_config_t *init_output_config() {
     output_config_t *res = malloc(sizeof(output_config_t));
     memset(res, 0, sizeof(output_config_t));
 
-    res->daily_ratio_amount = DAYS_AMOUNT;
+    res->daily_ratio_amount = DEFAULT_DAILY_RATIO_AMOUNT;
 
     return res;
 }
