@@ -24,9 +24,9 @@ void print_monitors_title(char *from_date, char *to_date) {
 }
 
 void print_monitor_data(monitor_t *monitor, int n_ratios) {
-		printf("%s -> | %s", monitor->name, format_ratio(&(monitor->quarter_ratio)));
-		for(int i = 0; i < n_ratios/4; i++)
-			printf("\t");
+		printf("%s -> | %s\t", monitor->name, format_ratio(&(monitor->quarter_ratio)));
+		for(int i = 0; i < n_ratios-8; i++)
+			printf(" ");
 		printf("%s\n", format_monitor_status(monitor->status));
 
 		for(int i = n_ratios - 1; i >= 0; i--) {
