@@ -21,7 +21,7 @@ jobs:
         run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
 
       - name: Setup Meson
-        run: sudo apt-get update && sudo apt-get install -y meson ninja-build cjson
+        run: sudo apt-get update && sudo apt-get install -y meson ninja-build libcjson-dev
 
       - name: Build dist tarball
         run: |
