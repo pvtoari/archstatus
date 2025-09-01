@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    paths:
+      - "VERSION"
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: echo "VERSION=$(cat VERSION)" >> $GITHUB_ENV
+
+      - name: Setup Meson
+        run: sudo apt-get update && sudo apt-get install -y meson ninja-build
+
+      - name: Build dist tarball
+        run: |
+          meson setup build
+          meson dist -C build --no-tests
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          files: build/meson-dist/archstatus-*.tar.*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
