@@ -20,7 +20,7 @@ void print_arch_logo(char *status) {
 }
 
 void print_monitors_title(char *from_date, char *to_date) {
-	printf("%sMonitors (default)%s    %sDate range: [%s-%s]%s\n\n", ANSI_BOLD, ANSI_COLOR_RESET, COLOR_GREY_FOREGROUND, from_date, to_date, ANSI_COLOR_RESET);
+	printf("%sMonitors (default)%s    %sDate range: [%s to %s]%s\n\n", ANSI_BOLD, ANSI_COLOR_RESET, COLOR_GREY_FOREGROUND, from_date, to_date, ANSI_COLOR_RESET);
 }
 
 void print_monitor_data(monitor_t *monitor, int n_ratios) {
