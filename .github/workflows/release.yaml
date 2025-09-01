@@ -35,4 +35,4 @@ jobs:
           name: Release v${{ env.VERSION }}
           files: build/meson-dist/archstatus-*.tar.*
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
