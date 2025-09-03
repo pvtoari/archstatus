@@ -1,11 +1,8 @@
 #ifndef ARCHSTATUS_H
 #define ARCHSTATUS_H
 
-#include <string.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include "results.h"
-#include "constants.h"
 
 #define PROGRAM_NAME "archstatus"
 #define DEFAULT_DAILY_RATIO_AMOUNT 30
@@ -32,21 +29,7 @@ latest_events_result_t *parse_events_data(fetch_data_t *data);
 
 monitor_list_result_t *parse_monitor_list_data(fetch_data_t *data);
 
-void print_monitors_title(char *from_date, char *to_date);
-
-void print_monitor_data(monitor_t *monitor, int n_ratios);
-
-char* format_ratio(ratio_t *ratio);
-
-char* ratio_to_colored_space(ratio_t *ratio);
-
-char* format_monitor_status(char *status);
-
-void print_events(latest_events_result_t *result);
-
-char* format_event(event_t *event);
 
 void print_arch_logo(char *status);
 
 #endif // ARCHSTATUS_H
-
