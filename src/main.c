@@ -1,8 +1,11 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "front.h"
+#include "logo.h"
+#include "constants.h"
 #include "archstatus.h"
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
@@ -16,6 +19,7 @@ void usage() {
     printf("  -r, --aur             Show AUR status\n");
     printf("  -w, --wiki	        Show wiki status\n");
     printf("  -d, --ratio-amount    Amount of daily ratios to show (default: %d)\n", DEFAULT_DAILY_RATIO_AMOUNT);
+    printf("  -l, --logo            OS logo to show (default: %s)\n", DEFAULT_OS_LOGO);
     printf("  -h, --help            Shows this help message\n");
 }
 
@@ -23,6 +27,7 @@ int main(int argc, char *argv[]) {
     struct option long_options[] = {
         {"help", no_argument, NULL, 'h'},
         {"ratio-amount", required_argument, NULL, 'd'},
+        {"logo", required_argument, NULL, 'l'},
         {"wiki", no_argument, NULL, 'w'},
         {"aur", no_argument, NULL, 'r'},
         {"site", no_argument, NULL, 's'},
@@ -35,7 +40,7 @@ int main(int argc, char *argv[]) {
 
     bool any = true;
     int opt;
-    while ((opt = getopt_long(argc, argv, "hd:wrsfe", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hl:d:wrsfe", long_options, NULL)) != -1) {
         switch (opt) {
             case 'h':
                 any = false;
@@ -43,6 +48,9 @@ int main(int argc, char *argv[]) {
                 exit(EXIT_SUCCESS);
             case 'd':
                 config->daily_ratio_amount = MIN(DAYS_AMOUNT, atoi(optarg));
+                break;
+            case 'l':
+                config->os = strdup(optarg);
                 break;
             case 'w':
                 any = false;
@@ -83,7 +91,7 @@ int main(int argc, char *argv[]) {
             exit(EXIT_FAILURE);
         }
 
-		print_arch_logo(monitors->statistics.count_result);
+		print_os_logo(config->os, monitors->statistics.count_result);
 
 		print_monitors_title(monitors->days[config->daily_ratio_amount - 1], monitors->days[DAYS_TODAY_ORD]);
 		if(any || config->do_aur) {
@@ -98,8 +106,7 @@ int main(int argc, char *argv[]) {
 		if(any || config->do_wiki) {
 			print_monitor_data(&(monitors->monitors[MONITOR_ORD_WIKI]), config->daily_ratio_amount);
 		}
-	} else 
-		print_arch_logo("");
+	}
 
     if (any || config->do_last_events) {
         fetch_data_t *events_data = fetch_url(ARCHLINUX_STATUS_EVENT_FEED_ENDPOINT);

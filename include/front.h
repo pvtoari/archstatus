@@ -21,17 +21,7 @@
 #define STATUS_OPERATIONAL_CODE "success"
 #define STATUS_DOWN_CODE "danger"
 
-#define ARCH_LOGO_ASCII_ART "\
-\n\033[38;2;23;147;209m\x1b[1m          .\x1b[0m\
-\n\033[38;2;23;147;209m\x1b[1m         /#\\     \x1b[0m         #    \033[38;2;23;147;209m | *\x1b[0m\
-\n\033[38;2;23;147;209m\x1b[1m        /###\\    \x1b[0m### #### #### \033[38;2;23;147;209m | | |---. |   | \\ /\x1b[0m\
-\n\033[38;2;23;147;209m\x1b[1m       /p^###\\   \x1b[0m#   #    #  # \033[38;2;23;147;209m | | |   | |   |  X\x1b[0m\
-\n\033[38;2;23;147;209m\x1b[1m      /##P^q##\\  \x1b[0m#   #### #  # \033[38;2;23;147;209m | | |   | ^._.| / \\\x1b[0m\
-\n\033[38;2;23;147;209m\x1b[1m     /##(   )##\\\x1b[0m\
-\n\033[38;2;23;147;209m\x1b[1m    /###P   q#,^\\\x1b[0m     %s\
-\n\033[38;2;23;147;209m\x1b[1m   /P^         ^q\\\x1b[0m"
-
-void print_arch_logo(char *status);
+void print_os_logo(char *os_release, char *status);
 
 void print_monitors_title(char *from_date, char *to_date);
 

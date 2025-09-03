@@ -1,14 +1,19 @@
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 #include <cjson/cJSON.h>
 #include <curl/curl.h>
-#include <stdarg.h>
 
 #include "archstatus.h"
+#include "logo.h"
+#include "constants.h"
 
 output_config_t *init_output_config() {
     output_config_t *res = malloc(sizeof(output_config_t));
     memset(res, 0, sizeof(output_config_t));
 
     res->daily_ratio_amount = DEFAULT_DAILY_RATIO_AMOUNT;
+    res->os = get_os_release();
 
     return res;
 }

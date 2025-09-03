@@ -3,18 +3,21 @@
 #include <stdio.h>
 
 #include "front.h"
+#include "logo.h"
 
-void print_arch_logo(char *status) {
+void print_os_logo(char *os_release, char *status) {
+	char *logo = get_logo_for(os_release);
+
 	if(strcmp(status, "") == 0) {
-		printf(ARCH_LOGO_ASCII_ART, "");
+		printf(logo);
 	} else if(strcmp(status, "All Clear") == 0) {
 		char *str;
 		asprintf(&str, "%s%s%s All systems %sOperational%s", COLOR_GREEN_FOREGROUND, BIG_BLACK_CIRCLE, ANSI_COLOR_RESET, COLOR_GREEN_FOREGROUND, ANSI_COLOR_RESET);
-		printf(ARCH_LOGO_ASCII_ART, str);
+		printf(logo, str);
 	} else {
 		char *str;
 		asprintf(&str, "%s%s%s%d monitor/s %sDown%s", COLOR_RED_FOREGROUND, BIG_BLACK_CIRCLE, ANSI_COLOR_RESET, status[0], COLOR_RED_FOREGROUND, ANSI_COLOR_RESET);
-		printf(ARCH_LOGO_ASCII_ART, str); 
+		printf(logo, str); 
 	}
 	printf("\n\n");
 }
