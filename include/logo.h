@@ -24,21 +24,15 @@
 #define LOGO_CRYSTALLINUX ""
 
 #define LOGO_ENDEAVOUROS "\n\
-[31m                     ./[35mo[34m.               [0m\n\
-[31m                   ./[35msssso[34m-             [0m ####                                                       ###    ####  \n\
-[31m                 `:[35mosssssss+[34m-           [0m #     ###       #   ###    ###   #   #   ###   #  #   ##  #   #  #      \n\
-[31m               `:+[35msssssssssso[34m/.         [0m ###   #  #      #  #   #      #  #   #  #   #  #  #  #    #   #   ###   \n\
-[31m             `-/o[35mssssssssssssso[34m/.       [0m #     #  #   ####  #####   ####   # #   #   #  #  #  #    #   #      #  \n\
-[31m           `-/+[35msssssssssssssssso[34m+:`     [0m #     #  #  #   #  #      #   #   # #   #   #  #  #  #    #   #      #  \n\
-[31m         `-:/+[35msssssssssssssssssso[34m+/.    [0m ####  #  #   ####   ###    ####    #     ###    ###  #     ###   ####   \n\
-[31m       `.://o[35msssssssssssssssssssso[34m++-   [0m                                                                         \n\
-[31m      .://+[35mssssssssssssssssssssssso[34m++:  [0m           %s\n\
-[31m    .:///o[35mssssssssssssssssssssssssso[34m++: [0m \n\
-[31m  `:////[35mssssssssssssssssssssssssssso[34m+++.[0m \n\
-[31m`-////+[35mssssssssssssssssssssssssssso[34m++++-[0m \n\
-[31m `..-+[35moosssssssssssssssssssssssso[34m+++++/`[0m \n\
-   ./++++++++++++++++++++++++++++++/:.  [0m \n\
-  `:::::::::::::::::::::::::------``    [0m \n"
+[31m           /*            [0m \n\
+[31m         #[35m****[34m*          [0m ####                                                       ###    ####  \n\
+[31m       #[35m********[34m#        [0m #     ###       #   ###    ###   #   #   ###   #  #   ##  #   #  #      \n\
+[31m     ##[35m**********[34m##      [0m ###   #  #      #  #   #      #  #   #  #   #  #  #  #    #   #   ###   \n\
+[31m   ##*[35m************[34m##     [0m #     #  #   ####  #####   ####   # #   #   #  #  #  #    #   #      #  \n\
+[31m ###*[35m*************[34m##     [0m #     #  #  #   #  #      #   #   # #   #   #  #  #  #    #   #      #  \n\
+[34m   ###############       [0m ####  #  #   ####   ###    ####    #     ###    ###  #     ###   ####   \n\
+\n\
+                                 %s"
 
 
 #define LOGO_GARUDALINUX ""
