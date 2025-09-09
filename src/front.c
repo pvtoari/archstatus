@@ -9,7 +9,7 @@ void print_os_logo(char *os_release, char *status) {
 	char *logo = get_logo_for(os_release);
 
 	if(strcmp(status, "") == 0) {
-		printf(logo);
+		printf("%s", logo);
 	} else if(strcmp(status, "All Clear") == 0) {
 		char *str;
 		asprintf(&str, "%s%s%s All systems %sOperational%s", COLOR_GREEN_FOREGROUND, BIG_BLACK_CIRCLE, ANSI_COLOR_RESET, COLOR_GREEN_FOREGROUND, ANSI_COLOR_RESET);
