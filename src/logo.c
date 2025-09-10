@@ -8,7 +8,9 @@ char *get_os_release() {
     char buffer[64] = "";
 
     fp = popen("/usr/bin/lsb_release -ds", "r");
-    fgets(buffer, 64, fp);
+    if (fgets(buffer, sizeof buffer, fp) == NULL) {
+    	buffer[0] = '\0'; /* Safe value if error or EOF */
+    }
     pclose(fp);
 
     return strdup(buffer);
