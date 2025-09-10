@@ -15,8 +15,20 @@
 #define LOGO_ARCHEX ""
 #define LOGO_ARCHMAN ""
 #define LOGO_ARCHSTRIKE ""
+
 #define LOGO_ARCOLINUX ""
-#define LOGO_ARTIXLINUX ""
+
+#define LOGO_ARTIXLINUX "\n\
+\033[36m      /\\             \033[0m \n\
+\033[36m     /  \\            \033[0m   #          #             #                           \n\
+\033[36m    /`'.,\\           \033[0m  # #    ##   #   #  #   #  #     #  ###   #  #  #   #  \n\
+\033[36m   /     ',          \033[0m #   #  #    ###      # #   #        #  #  #  #   # #   \n\
+\033[36m  /      ,`\\         \033[0m #####  #     #   #    #    #     #  #  #  #  #    #    \n\
+\033[36m /   ,.'`.  \\        \033[0m #   #  #     #   #   # #   #     #  #  #  #  #   # #   \n\
+\033[36m/.,'`     `'.\\       \033[0m #   #  #     ##  #  #   #  ####  #  #  #   ###  #   #  \n\
+\n\
+                                %s"
+
 #define LOGO_BLACKARCH ""
 #define LOGO_BLUESTARLINUX ""
 #define LOGO_CHIMERAOS ""
