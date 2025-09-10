@@ -50,7 +50,19 @@
 #define LOGO_HYPERBOLA ""
 #define LOGO_INSTANTOS ""
 #define LOGO_KAOS ""
-#define LOGO_MANJARO ""
+
+#define LOGO_MANJARO "\n\
+\033[32m||||||||| ||||   \033[0m\n\
+\033[32m||||||||| ||||   \033[0m #    #                                       \n\
+\033[32m||||      ||||   \033[0m ##  ##   ###   ###     #   ###    ##   ###   \n\
+\033[32m|||| |||| ||||   \033[0m # ## #      #  #  #           #  #    #   #  \n\
+\033[32m|||| |||| ||||   \033[0m #    #   ####  #  #    #   ####  #    #   #  \n\
+\033[32m|||| |||| ||||   \033[0m #    #  #   #  #  #    #  #   #  #    #   #  \n\
+\033[32m|||| |||| ||||   \033[0m #    #   ####  #  #    #   ####  #     ###   \n\
+                                       ##                      \n\
+\n\
+                        %s"
+
 #define LOGO_MSYS2 ""
 #define LOGO_OBARUN ""
 #define LOGO_PARABOLA ""
