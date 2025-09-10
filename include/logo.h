@@ -53,6 +53,8 @@
 
 char *get_os_release();
 
+char *read_fallback_file(char *path);
+
 char *get_logo_for(char *os_release);
 
 #endif // LOGO_H

@@ -4,9 +4,11 @@
 
 #include "front.h"
 #include "logo.h"
+#include "sanitize.h"
 
 void print_os_logo(char *os_release, char *status) {
-	char *logo = get_logo_for(os_release);
+	char *sanitized_os_release = sanitize_os_release_str(os_release);
+	char *logo = get_logo_for(sanitized_os_release);
 
 	if(strcmp(status, "") == 0) {
 		printf("%s", logo);
