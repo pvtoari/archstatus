@@ -34,7 +34,7 @@ void print_monitor_data(monitor_t *monitor, int n_ratios) {
 			printf(" ");
 		printf("%s\n", format_monitor_status(monitor->status));
 
-		for(int i = n_ratios - 1; i >= 0; i--) {
+		for(int i = DAYS_AMOUNT - n_ratios; i < DAYS_AMOUNT; i++) {
 			ratio_t daily_ratio = monitor->daily_ratios[i];
 			printf("%s ", ratio_to_colored_space(&daily_ratio));
 		}
