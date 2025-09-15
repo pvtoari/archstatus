@@ -179,7 +179,7 @@ latest_events_result_t *parse_events_data(fetch_data_t *data) {
         if (!json_title || !cJSON_IsString(json_title)) goto end;
         result->events[i].title = strdup(json_title->valuestring);
 
-        cJSON *json_timestamp = cJSON_GetObjectItemCaseSensitive(event, "ts");
+        cJSON *json_timestamp = cJSON_GetObjectItemCaseSensitive(event, "timestamp");
         if (!json_timestamp || !cJSON_IsNumber(json_timestamp)) goto end;
         result->events[i].timestamp = json_timestamp->valuedouble;
 
