@@ -2,7 +2,7 @@
 #define RESULTS_H
 
 #define DAYS_AMOUNT 90
-#define DAYS_TODAY_ORD 0
+#define DAYS_TODAY_ORD 89
 
 #include <stddef.h>
 

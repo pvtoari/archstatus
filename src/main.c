@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 
 		print_os_logo(config->os, monitors->statistics.count_result);
 
-		print_monitors_title(monitors->days[config->daily_ratio_amount - 1], monitors->days[DAYS_TODAY_ORD]);
+		print_monitors_title(monitors->days[0], monitors->days[DAYS_TODAY_ORD]);
 		if(any || config->do_aur) {
 			print_monitor_data(&(monitors->monitors[MONITOR_ORD_AUR]), config->daily_ratio_amount);
 		}
