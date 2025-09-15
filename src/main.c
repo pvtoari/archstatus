@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 
         monitor_list_result_t *monitors = parse_monitor_list_data(monitors_data);
         if (!monitors) {
-            fprintf(stderr, "error: failed to fetch parse monitors data.\n");
+            fprintf(stderr, "error: failed to parse monitors data.\n");
             exit(EXIT_FAILURE);
         }
 
